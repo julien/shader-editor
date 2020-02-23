@@ -44,8 +44,17 @@ function App() {
 		gl.useProgram(prog);
 	}
 
+	function initBuffers() {
+
+	}
+
 	useEffect(() => {
 		initGL();
+		// TODO:
+		// initialize buffers
+		// draw
+		// add drag and drop
+		// reload of drop
 	}, []);
 
 	return (
