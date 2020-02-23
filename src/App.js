@@ -20,7 +20,6 @@ function App() {
 	let gl;
 
 	function initGL() {
-		console.log(canvasRef.current);
 		gl = canvasRef.current.getContext("webgl");
 
 		const prog = gl.createProgram();
