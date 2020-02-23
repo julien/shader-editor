@@ -1,53 +1,67 @@
-import React from "react";
-import AceEditor from "react-ace-builds";
-import "react-ace-builds/webpack-resolver-min";
+import React, { useEffect, useRef } from "react";
+
+const DEFAULT_VERTEX_SHADER = `
+attribute vec2 p;
+
+void main() {
+	gl_Position = vec4(p, 0, 1);
+}
+`;
+
+const DEFAULT_FRAGMENT_SHADER = `
+void main() {
+	gl_FragColor = vec4(.3, .3, .2, 1.);
+}
+`;
 
 function App() {
-	const handleChange = e => {};
+	const editorRef = useRef();
+	const canvasRef = useRef();
+	let gl;
 
-	// TODO:
+	function initGL() {
+		console.log(canvasRef.current);
+		gl = canvasRef.current.getContext("webgl");
 
-	// + Initialize WebGL context
+		const prog = gl.createProgram();
 
-	// + Load default shader (in GL context and it's source in the editor)
+		let sh;
 
-	// + Add drag and drop support:
+		gl.shaderSource(
+			(sh = gl.createShader(gl.VERTEX_SHADER)),
+			DEFAULT_VERTEX_SHADER
+		);
+		gl.compileShader(sh);
+		gl.attachShader(prog, sh);
 
-	// 		Drag fragment shader from desktop to canvas
-	// 		Once the file loaded, render shader in gl context and load source in
-	// 		ace editor
+		gl.shaderSource(
+			(sh = gl.createShader(gl.FRAGMENT_SHADER)),
+			DEFAULT_FRAGMENT_SHADER
+		);
+		gl.compileShader(sh);
+		gl.attachShader(prog, sh);
 
-	// + Toggle editor visibilty
-	// + Make it look nice
-	// + Export/Import (re-use the dnd stuff for import)
+		gl.linkProgram(prog);
+		gl.useProgram(prog);
+	}
+
+	useEffect(() => {
+		initGL();
+	}, []);
 
 	return (
 		<div>
-			<header>
-				<h3>Title here</h3>
-				<span>A description or something should go here</span>
-			</header>
-
 			<div className="main">
 				<div className="editor">
-					<span>TODO: toggle editor visibility</span>
-					<AceEditor
-						cursorStart={2}ḉ
-						debounceChangePeriod={1000}
-						fontSize={16}
-						id="editor"
-						mode="c_cpp" /* No GLSL mode for ace-editor !!! */
-						onChange={handleChange}
-						showPrintMargin={false}
-						tabSize={2}
-						theme="twilight"
-						value="// Your code goes here..."
-					/>
+					<pre>
+						<code
+							contentEditable={true}
+							dangerouslySetInnerHTML={{ __html: DEFAULT_FRAGMENT_SHADER }}
+							ref={editorRef}
+						></code>
+					</pre>
 				</div>
-
-				<div>
-					<canvas id="canvas"></canvas>
-				</div>
+				<canvas ref={canvasRef}></canvas>
 			</div>
 		</div>
 	);
