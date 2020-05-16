@@ -137,8 +137,6 @@ function App() {
 
 		rafRef.current = requestAnimationFrame(loop);
 
-		// TODO: drag and drop
-
 		document.addEventListener("mousemove", handleMouseMove, false);
 
 		return () => {
