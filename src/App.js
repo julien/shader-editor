@@ -113,9 +113,14 @@ function App() {
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, positions.length / 2);
 	}
 
+	function map(val, srcMin, srcMax, dstMin, dstMax) {
+		var norm = (val - srcMin) / (srcMax - srcMin);
+		return (dstMax - dstMin) * norm + dstMin;
+	}
+
 	const handleMouseMove = useCallback((e) => {
-		mouse[0] = e.pageX;
-		mouse[1] = e.pageY * -1;
+		mouse[0] = map(e.pageX, 0, canvasRef.current.clientWidth, -1, 1);
+		mouse[1] = map(e.pageY * -1, 0, -canvasRef.current.clientHeight, 1, -1);
 
 		gl.uniform2f(info.mouse, mouse[0], mouse[1]);
 		/* eslint-disable react-hooks/exhaustive-deps */
