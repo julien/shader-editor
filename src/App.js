@@ -42,8 +42,8 @@ function App() {
 	let lastTime = 0;
 	let mouse = [0.5, 0.5];
 	let time = 0;
+
 	const [text, setText] = useState(DEFAULT_FRAGMENT_SHADER);
-	let lastText = text;
 
 	const info = {
 		position: null,
@@ -66,10 +66,7 @@ function App() {
 		gl.compileShader(sh);
 		gl.attachShader(prog, sh);
 
-		gl.shaderSource(
-			(sh = gl.createShader(gl.FRAGMENT_SHADER)),
-			text
-		);
+		gl.shaderSource((sh = gl.createShader(gl.FRAGMENT_SHADER)), text);
 		gl.compileShader(sh);
 		gl.attachShader(prog, sh);
 
@@ -154,14 +151,9 @@ function App() {
 	}, []);
 
 	function handleBlur(e) {
-		const currentText = e.target.innerHTML;
-		if (currentText !== lastText) {
-			setText(currentText);
+		if (e.target.innerHTML !== text) {
+			setText(e.target.innerHTML);
 		}
-	}
-
-	function handleFocus(e) {
-		lastText = e.target.innerHTML;
 	}
 
 	useEffect(() => {
@@ -186,7 +178,6 @@ function App() {
 						dangerouslySetInnerHTML={{ __html: text }}
 						ref={editorRef}
 						onBlur={handleBlur}
-						onFocus={handleFocus}
 					></code>
 				</pre>
 			</div>
