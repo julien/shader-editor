@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 const DEFAULT_VERTEX_SHADER = `
 attribute vec2 a_position;
@@ -42,7 +42,8 @@ function App() {
 	let lastTime = 0;
 	let mouse = [0.5, 0.5];
 	let time = 0;
-	let lastText = DEFAULT_FRAGMENT_SHADER;
+	const [text, setText] = useState(DEFAULT_FRAGMENT_SHADER);
+	let lastText = text;
 
 	const info = {
 		position: null,
@@ -51,7 +52,7 @@ function App() {
 		time: null,
 	};
 
-	function initGL() {
+	function createProgram() {
 		gl = canvasRef.current.getContext("webgl");
 
 		const prog = gl.createProgram();
@@ -67,7 +68,7 @@ function App() {
 
 		gl.shaderSource(
 			(sh = gl.createShader(gl.FRAGMENT_SHADER)),
-			DEFAULT_FRAGMENT_SHADER
+			text
 		);
 		gl.compileShader(sh);
 		gl.attachShader(prog, sh);
@@ -81,7 +82,7 @@ function App() {
 		info.time = gl.getUniformLocation(prog, "u_time");
 	}
 
-	function initBuffers() {
+	function createBuffers() {
 		gl.enableVertexAttribArray(info.position);
 		gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
@@ -127,8 +128,8 @@ function App() {
 		W.current = canvasRef.current.clientWidth;
 		H.current = canvasRef.current.clientHeight;
 
-		initGL();
-		initBuffers();
+		createProgram();
+		createBuffers();
 		setUniforms();
 
 		gl.viewport(0, 0, gl.canvas.clientWidth, gl.canvas.clientHeight);
@@ -139,9 +140,7 @@ function App() {
 
 		rafRef.current = requestAnimationFrame(loop);
 
-		// TODO:
-		// add drag and drop
-		// reload of drop
+		// TODO: drag and drop
 
 		document.addEventListener("mousemove", handleMouseMove, false);
 
@@ -157,12 +156,25 @@ function App() {
 	function handleBlur(e) {
 		const currentText = e.target.innerHTML;
 		if (currentText !== lastText) {
+			setText(currentText);
 		}
 	}
 
 	function handleFocus(e) {
 		lastText = e.target.innerHTML;
 	}
+
+	useEffect(() => {
+		if (text !== DEFAULT_FRAGMENT_SHADER) {
+			if (rafRef.current) {
+				cancelAnimationFrame(rafRef.current);
+			}
+			createProgram();
+			createBuffers();
+			setUniforms();
+			loop();
+		}
+	}, [text]);
 
 	return (
 		<div className="main">
@@ -171,7 +183,7 @@ function App() {
 				<pre>
 					<code
 						contentEditable={true}
-						dangerouslySetInnerHTML={{ __html: DEFAULT_FRAGMENT_SHADER }}
+						dangerouslySetInnerHTML={{ __html: text }}
 						ref={editorRef}
 						onBlur={handleBlur}
 						onFocus={handleFocus}
