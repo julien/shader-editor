@@ -143,12 +143,16 @@ function App() {
 		rafRef.current = requestAnimationFrame(loop);
 
 		document.addEventListener("mousemove", handleMouseMove, false);
+		document.addEventListener("dragover", handleDragOver, false);
+		document.addEventListener("drop", handleDrop, false);
 
 		return () => {
 			if (rafRef.current) {
 				cancelAnimationFrame(rafRef.current);
 			}
 			document.removeEventListener("mousemove", handleMouseMove);
+			document.addEventListener("dragover", handleDragOver, false);
+			document.addEventListener("drop", handleDrop, false);
 		};
 		/* eslint-disable react-hooks/exhaustive-deps */
 	}, []);
@@ -156,6 +160,26 @@ function App() {
 	function handleBlur(e) {
 		if (e.target.innerHTML !== text) {
 			setText(e.target.innerHTML);
+		}
+	}
+
+	function handleDragOver(e) {
+		e.preventDefault();
+	}
+
+	function handleDrop(e) {
+		e.preventDefault();
+
+		if (e.dataTransfer && e.dataTransfer.files) {
+			const file = e.dataTransfer.files[0];
+
+			const reader = new FileReader();
+			reader.addEventListener("loadend", () => {
+				if (reader.result) {
+					setText(reader.result);
+				}
+			});
+			reader.readAsText(file);
 		}
 	}
 
