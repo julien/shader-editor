@@ -1,4 +1,4 @@
-window.addEventListener("load", function () {
+window.addEventListener("load", () => {
   const DEFAULT_VERTEX_SHADER = `
 attribute vec2 a_position;
 
@@ -50,14 +50,13 @@ void main() {
   code.innerHTML = text;
 
   function map(val, srcMin, srcMax, dstMin, dstMax) {
-    var norm = (val - srcMin) / (srcMax - srcMin);
+    const norm = (val - srcMin) / (srcMax - srcMin);
     return (dstMax - dstMin) * norm + dstMin;
   }
 
   function handleBlur(e) {
     if (e.target.innerHTML !== text) {
       text = e.target.innerHTML;
-      // update
       update();
     }
   }
@@ -75,7 +74,6 @@ void main() {
       const reader = new FileReader();
       reader.addEventListener("loadend", () => {
         if (reader.result) {
-          // setText(reader.result);
           text = reader.result;
           update();
         }
