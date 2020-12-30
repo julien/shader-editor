@@ -5,16 +5,13 @@ body {
 
 code {
   font-family: monospace;
+  outline: none;
 }
 
 pre {
   background: #eee;
   margin: 4px;
   padding: 8px;
-}
-
-code {
-  outline: none;
 }
 
 canvas {
