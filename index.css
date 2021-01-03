@@ -9,18 +9,47 @@ code {
 }
 
 pre {
-  background: #eee;
-  margin: 4px;
   padding: 8px;
-}
-
-canvas {
-  border: 1px solid #dddddd;
-  min-height: 400px;
 }
 
 .main {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
+}
+
+.editor {
+  background: #eee;
+}
+
+@media only screen and (max-width: 1024px) {
+  body {
+    background: #eee;
+  }
+
+  .main {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  #canvas {
+    border: 1px solid #ddd;
+    flex: 1 1 50%;
+    min-height: 50vh;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .main {
+    flex-wrap: nowrap;
+    height: 100vh;
+    justify-content: center;
+  }
+
+  #canvas {
+    flex: 1 1 50%;
+  }
+
+  .editor {
+    height: 100vh;
+    width: 50vw;
+  }
 }
